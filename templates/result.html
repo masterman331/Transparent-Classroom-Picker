@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    /* Sleek Animation CSS */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseGlow { 0% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.4); } 50% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.8); } 100% { box-shadow: 0 0 5px rgba(56, 189, 248, 0.4); } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    
+    .term-line { animation: fadeIn 0.2s ease-out forwards; }
+    .cursor { display: inline-block; width: 8px; height: 1em; background: #4ade80; animation: blink 1s step-end infinite; vertical-align: bottom; margin-left: 2px;}
+    .pulse-container { animation: pulseGlow 2s infinite; border: 1px solid #38bdf8; }
+</style>
+
+<h2>Results Generated</h2>
+
+{% if dramatic_mode == '1' %}
+<div id="dramatic-container" style="background:#0f172a; padding:20px; border-radius:12px; margin-bottom:30px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+    <h3 style="text-align:center; color: #38bdf8; margin-top:0;">✨ Cryptographic Sequence Engine</h3>
+    
+    <!-- Pulse Glowing Preview Box -->
+    <div id="live-preview" class="pulse-container" style="background:#1e293b; padding:30px; border-radius:8px; text-align:center; font-weight:bold; min-height: 100px; color:#f8fafc; font-size:1.2em; margin-bottom:15px; display:flex; flex-direction:column; justify-content:center; align-items:center; transition: all 0.3s;">
+        <span style="color:#94a3b8; font-size:0.8em;">Initializing Secure Matrix...</span>
+    </div>
+    
+    <!-- Matrix Terminal -->
+    <div class="terminal" id="live-terminal" style="height: 350px; background:#020617; border:1px solid #334155; margin-top:0; position:relative; overflow-y:scroll; padding-bottom:30px;">
+        <div id="cursor-block" class="cursor" style="position:absolute; bottom:10px; left:20px;"></div>
+    </div>
+    
+    <div style="text-align:right; margin-top:10px;">
+        <button onclick="skipAnimation()" style="background:#334155; color:#cbd5e1; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-size:0.8em;">⏭️ Skip Animation</button>
+    </div>
+</div>
+<div id="final-result-container" style="display:none; animation: fadeIn 1s ease-out;">
+{% else %}
+<div id="final-result-container">
+{% endif %}
+
+    <!-- FINAL RESULT UI -->
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 30px; overflow-x:auto;">
+        {% if data.mode in ['teams', 'pairs'] %}
+            <div class="mode-grid">
+            {% for group in data.result %}
+                <div class="result-block"><h3>Group {{ loop.index }}</h3><ol style="margin:0; padding-left:20px;">{% for person in group %}<li>{{ person }}</li>{% endfor %}</ol></div>
+            {% endfor %}
+            </div>
+        {% elif data.mode == 'roles' %}
+            <ul>{% for item in data.result %}<li><strong>{{ item.role }}:</strong> {{ item.name }}</li>{% endfor %}</ul>
+        {% elif data.mode == 'secret_santa' %}
+            <ul>{% for item in data.result %}<li><strong>{{ item.giver }}</strong> 🎁 gives to <strong>{{ item.receiver }}</strong></li>{% endfor %}</ul>
+        {% elif data.mode == 'bracket' %}
+            <div style="background:#f1f5f9; padding: 20px; border-radius: 8px;">
+                {% for match in data.result %}
+                <div style="background:#fff; border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:6px; font-weight:bold; display:flex; justify-content:space-between;">
+                    <span style="color:var(--primary)">{{ match.p1 }}</span> <span>vs</span> <span style="color:{% if 'BYE' in match.p2 %}var(--text-muted){% else %}var(--primary){% endif %}">{{ match.p2 }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        {% elif data.mode == 'seating' %}
+            {% if data.mode_params.table_rows %}
+            <div style="background:#e2e8f0; padding:20px; border-radius:8px;">
+                <div style="text-align:center; padding:10px; background:#fff; margin-bottom:20px; font-weight:bold; letter-spacing:5px; border-bottom:4px solid var(--primary); border-radius:4px;">FRONT OF CLASSROOM</div>
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    {% for row in data.result %}
+                        <div style="display:flex; justify-content:space-around; gap:15px;">
+                            {% for table in row %}
+                                <div style="background:#fff; border:2px solid #cbd5e1; border-radius:8px; padding:10px; flex:1;">
+                                    <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px;">
+                                        {% for seat in table %}
+                                            <div style="background:{% if seat == 'Empty Seat' %}#f1f5f9; color:#94a3b8;{% else %}#e0f2fe; color:#0369a1; font-weight:bold;{% endif %} padding:12px; border-radius:4px; text-align:center; font-size:0.95em; border: 1px solid #bae6fd;">
+                                                {{ seat }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+                <p>Legacy seating mode display active.</p>
+            {% endif %}
+        {% else %}
+            <ol style="font-size: 1.1em; padding-left:20px;">
+                {% for person in data.result %}<li>{{ person }}</li>{% endfor %}
+            </ol>
+        {% endif %}
+    </div>
+
+    <h3>Audit & Execution Statistics</h3>
+    <div class="stats-grid">
+        <div><strong>Server Seed:</strong> <code style="word-break:break-all;">{{ data.cryptography.server_seed_revealed }}</code></div>
+        <div><strong>Client Seed:</strong> <code>{{ data.cryptography.client_seed }}</code></div>
+        <div><strong>Entropy Source:</strong> {{ data.cryptography.entropy_source }} ({{ data.cryptography.entropy_metadata.latency_ms }} ms)</div>
+        <div><strong>Raw Entropy:</strong> <code style="word-break:break-all;">{{ data.cryptography.raw_entropy }}</code></div>
+    </div>
+
+    <div class="signature-box">
+        <h4 style="margin:0 0 10px 0;">Digital File Seal Attached</h4>
+        Signed By: <strong>{{ data.signature.signer_name }}</strong><br>
+        {% if auto_pass %}<span style="color:var(--error); font-weight:bold;">Auto-Generated Password (SAVE THIS): <code>{{ auto_pass }}</code></span>{% endif %}<br><br>
+        <small style="color:var(--text-muted)">Global File Seal: <code>{{ data.final_file_seal }}</code></small>
+    </div>
+
+    <div style="margin-top:30px; text-align:center;"><a href="/download/{{ file_id }}" class="btn" style="width: auto;">Download JSON Audit File</a></div>
+
+    <hr style="margin: 40px 0;">
+    <h3>Blockchain Note Ledger</h3>
+    <div style="background: var(--surface); border-left: 4px solid var(--primary); padding: 15px;">
+        {% for block in data.metadata_ledger %}
+        <div style="margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+            <strong>{{ block.title }}</strong> <span style="color:var(--text-muted); font-size:0.8em;">by {{ block.author }} on {{ block.timestamp.split('T')[0] }}</span><br>
+            <p style="margin: 5px 0;">{{ block.notes }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h4>Append to Ledger (Update Context)</h4>
+    <form action="/append_note/{{ file_id }}" method="POST" class="info-box">
+        <div style="display:flex; gap:10px;"><input type="text" name="title" placeholder="New Title" required><input type="text" name="author" placeholder="Your Name" required></div>
+        <textarea name="notes" placeholder="Add comments..." rows="3" required></textarea>
+        <input type="password" name="edit_password" placeholder="Teacher's Signature Password" required>
+        <button type="submit" class="btn">Cryptographically Append Note</button>
+    </form>
+
+</div> <!-- End Final Container -->
+
+{% if dramatic_mode == '1' %}
+<script>
+    const executionLog = {{ data.execution_log | tojson }};
+    const terminal = document.getElementById('live-terminal');
+    const cursor = document.getElementById('cursor-block');
+    const preview = document.getElementById('live-preview');
+    const finalContainer = document.getElementById('final-result-container');
+    const dramaticContainer = document.getElementById('dramatic-container');
+    
+    // Time calculations
+    const requestedTimeSecs = parseInt("{{ dramatic_time }}");
+    const totalSteps = executionLog.length;
+    // We do 4 micro-prints per step, so we divide total time among all micro-steps.
+    // Ensure delay never drops below 20ms to prevent browser thread locking.
+    let microDelay = Math.max(20, (requestedTimeSecs * 1000) / (totalSteps * 4)); 
+    
+    let isSkipping = false;
+
+    // Helper to pause execution
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    function skipAnimation() {
+        isSkipping = true;
+    }
+
+    function printTerminal(text, color = '#4ade80', bg = 'transparent', bold = false) {
+        const div = document.createElement('div');
+        div.className = 'term-line';
+        div.style.color = color;
+        div.style.backgroundColor = bg;
+        if(bold) div.style.fontWeight = 'bold';
+        div.innerHTML = text;
+        
+        // Insert right before the blinking cursor
+        terminal.insertBefore(div, cursor);
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    async function runDramaticReveal() {
+        printTerminal("==========================================", "#38bdf8", "transparent", true);
+        printTerminal(">>> INITIALIZING SECURE VIRTUAL MACHINE...", "#fcd34d");
+        printTerminal(`>>> ESTIMATED AUDIT RUNTIME: ${requestedTimeSecs} SECONDS`, "#fcd34d");
+        printTerminal(">>> MOUNTING SERVER SEED & CLIENT ENTROPY...", "#fcd34d");
+        printTerminal("==========================================", "#38bdf8", "transparent", true);
+        await sleep(1000);
+
+        for (let i = 0; i < totalSteps; i++) {
+            if (isSkipping) break; // Break loop instantly if skipped
+            
+            const log = executionLog[i].event;
+            
+            // Micro-Step 1: Queuing Nonce
+            printTerminal(`[SYS] Processing Nonce [${log.nonce}] -> Fetching Entropy Stream...`, '#94a3b8');
+            preview.innerHTML = `<span style="font-size:0.8em; color:#94a3b8;">Generating HMAC for Nonce ${log.nonce}...</span>`;
+            if(!isSkipping) await sleep(microDelay);
+
+            // Micro-Step 2: HMAC Hash
+            printTerminal(`  ├─> HMAC-SHA256: ${log.derived_hash.substring(0,32)}...`, '#a78bfa');
+            if(!isSkipping) await sleep(microDelay);
+
+            // Micro-Step 3: Math Operation
+            let mathText = log.action_details.math || "Deterministic Math Applied";
+            printTerminal(`  ├─> MATH OP: ${mathText}`, '#fbbf24');
+            if(!isSkipping) await sleep(microDelay);
+
+            // Micro-Step 4: Final Action output & Preview Update
+            let actionHtml = "";
+            let actionLog = "";
+            
+            if (log.action_details.type === 'shuffle_swap') {
+                actionLog = `  └─> [SWAP EXECUTED] ${log.action_details.swap_values}`;
+                actionHtml = `<span style="font-size:0.7em; color:#94a3b8;">Cryptographic Swap Executed</span><br><span style="color:#38bdf8; font-size:1.4em;">${log.action_details.swap_values}</span>`;
+            } else if (log.action_details.type === 'lottery_selection') {
+                actionLog = `  └─> [WINNER LOCKED] ${log.action_details.winner}`;
+                actionHtml = `<span style="font-size:0.7em; color:#94a3b8;">Winner Selected Deterministically</span><br><span style="color:#4ade80; font-size:1.8em; text-transform:uppercase;">${log.action_details.winner}</span>`;
+            } else if (log.action_details.type === 'weighted_score') {
+                actionLog = `  └─> [PRIORITY LOGGED] ${log.action_details.name}`;
+                actionHtml = `<span style="font-size:0.7em; color:#94a3b8;">Applying Fractional Math to</span><br><span style="color:#fcd34d; font-size:1.5em;">${log.action_details.name}</span>`;
+            }
+            
+            printTerminal(actionLog, '#f8fafc', '#1e293b', true);
+            preview.innerHTML = actionHtml;
+            
+            // Add spacing between blocks
+            printTerminal("<br>");
+            if(!isSkipping) await sleep(microDelay);
+        }
+
+        // Finish sequence
+        printTerminal("==========================================", "#38bdf8", "transparent", true);
+        printTerminal("[SYS] ALL CRYPTOGRAPHIC OPERATIONS VERIFIED.", "#4ade80", "transparent", true);
+        printTerminal("[SYS] COMPILING SECURE VISUAL MATRIX...", "#4ade80");
+        preview.innerHTML = `<span style="color:#4ade80; font-size:1.4em;">✅ Audit Complete. Revealing Matrix...</span>`;
+        preview.classList.remove('pulse-container');
+        preview.style.boxShadow = "0 0 30px #4ade80";
+        preview.style.borderColor = "#4ade80";
+        
+        await sleep(isSkipping ? 0 : 1500);
+        
+        dramaticContainer.style.display = 'none';
+        finalContainer.style.display = 'block';
+    }
+
+    // Start Async Engine
+    runDramaticReveal();
+</script>
+{% endif %}
+{% endblock %}

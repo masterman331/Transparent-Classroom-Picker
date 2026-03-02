@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Results History Dashboard</h2>
+<input type="text" id="search" class="search-bar" placeholder="🔍 Search past results by title, mode, or notes..." onkeyup="filterTable()">
+
+<table id="historyTable">
+    <tr><th>Date</th><th>Mode</th><th>Title</th><th>Notes</th><th>Actions</th></tr>
+    {% for item in history %}
+    <tr>
+        <td style="font-size: 0.85em;">{{ item.date.split('T')[0] }}<br>{{ item.date.split('T')[1][:5] }}</td>
+        <td><span class="badge">{{ item.mode }}</span></td>
+        <td><strong>{{ item.title }}</strong></td>
+        <td style="color:var(--text-muted); font-size: 0.9em;">{{ item.notes[:50] }}...</td>
+        <td><a href="/result/{{ item.id }}" class="btn" style="padding: 6px 12px; font-size: 0.85em; width:auto;">View & Edit</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<script>
+function filterTable() {
+    let filter = document.getElementById('search').value.toLowerCase();
+    let trs = document.getElementById('historyTable').getElementsByTagName('tr');
+    for (let i = 1; i < trs.length; i++) {
+        trs[i].style.display = trs[i].innerText.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+    }
+}
+</script>
+{% endblock %}

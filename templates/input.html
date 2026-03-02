@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ mode_name }}</h2>
+<div class="info-box">
+    <strong>Pre-computation Hash (SHA-256):</strong><br>
+    <code style="word-break: break-all;">{{ ss_hash }}</code>
+</div>
+
+<form action="/process" method="POST">
+    <input type="hidden" name="mode" value="{{ mode }}">
+    
+    <div style="display:flex; gap:15px; margin-bottom:15px;">
+        <div style="flex:2">
+            <label>Custom Title for this Record</label>
+            <input type="text" name="custom_title" placeholder="e.g., Friday Science Project Groups">
+        </div>
+        <div style="flex:1.5">
+            <label>Reveal Animation Engine</label>
+            <select name="dramatic_mode" id="dramatic_mode" onchange="toggleTimeInput()" style="background:#e0f2fe; border-color:#bae6fd; font-weight:bold;">
+                <option value="0">Instant Result</option>
+                <option value="1">✨ Deep Mathematical Slow-Motion Engine</option>
+            </select>
+        </div>
+        <div style="flex:1; display:none; transition: 0.3s;" id="time_input_container">
+            <label>Total Duration (Secs)</label>
+            <input type="number" name="dramatic_time" value="15" min="2" max="600" style="background:#fef9c3; border-color:#fde047; font-weight:bold;">
+        </div>
+    </div>
+
+    <script>
+        function toggleTimeInput() {
+            var mode = document.getElementById('dramatic_mode').value;
+            document.getElementById('time_input_container').style.display = mode === '1' ? 'block' : 'none';
+        }
+    </script>
+
+    <label>
+        {% if mode == 'raffle' %} Participant Tickets (Format: Name:Tickets, e.g., Alice:5)
+        {% elif mode == 'weighted_shuffle' %} Participant Priorities (Format: Name:Points, e.g., John:100 pushes him further back)
+        {% else %} Student/Participant Names (One per line) {% endif %}
+    </label>
+    <textarea name="names" rows="6" required placeholder="Alice&#10;Bob&#10;Charlie..."></textarea>
+    
+    {% if mode in ['multi_lottery', 'captains', 'pop_quiz_n'] %}
+        <label>How many people to select?</label>
+        <input type="number" name="num_count" value="3" min="1" required>
+    {% elif mode == 'teams' %}
+        <label>How many teams?</label>
+        <input type="number" name="num_teams" value="2" min="2" required>
+    {% elif mode == 'roles' %}
+        <label>Roles (Comma separated, e.g., 'Leader, Note Taker, Presenter')</label>
+        <input type="text" name="roles_list" required>
+    {% elif mode == 'seating' %}
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label>Rows of Tables</label><input type="number" name="table_rows" value="3" min="1" required></div>
+            <div style="flex:1"><label>Columns of Tables</label><input type="number" name="table_cols" value="2" min="1" required></div>
+            <div style="flex:1"><label>Seats per Table</label><input type="number" name="seats_per_table" value="4" min="1" required></div>
+        </div>
+    {% endif %}
+
+    <label>Client Entropy Seed (Adds your own randomness)</label>
+    <input type="text" name="client_seed" value="{{ client_seed }}" required>
+    
+    <label>True Entropy Engine</label>
+    <select name="entropy_source">
+        <option value="random_org">Random.org JSON-RPC (Quantum Atmospheric Noise)</option>
+        <option value="local">Local OS Deep Hybrid (Threads, Time, Process IDs, CSPRNG)</option>
+    </select>
+    
+    <hr style="border: 0; border-top: 1px solid var(--border); margin: 30px 0;">
+    <h3 style="margin-top:0;">Digital Signature & File Seal (Optional)</h3>
+    <div style="display:flex; gap:15px;">
+        <div style="flex:1"><label>Teacher Name</label><input type="text" name="signer_name" placeholder="Leave blank for Auto"></div>
+        <div style="flex:1"><label>Signature Password</label><input type="password" name="signer_pass" placeholder="Used to verify signature"></div>
+    </div>
+    <button type="submit" class="btn">Generate Cryptographic Selection</button>
+</form>
+{% endblock %}

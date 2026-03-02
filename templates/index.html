@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<input type="text" id="search" class="search-bar" placeholder="🔍 Search selection modes (e.g., Team, Roles, Lottery)..." onkeyup="filterModes()">
+
+<div class="mode-grid" id="modeGrid">
+    {% for key, name in modes.items() %}
+    <a href="/input/{{ key }}" class="mode-card">
+        <strong>{{ name.split(' (')[0] }}</strong>
+        <span style="font-size: 0.85em; color: var(--text-muted);">{{ name.split(' (')[1][:-1] if '(' in name else '' }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+<script>
+function filterModes() {
+    let filter = document.getElementById('search').value.toLowerCase();
+    let cards = document.getElementById('modeGrid').getElementsByTagName('a');
+    for (let i = 0; i < cards.length; i++) {
+        let txtValue = cards[i].textContent || cards[i].innerText;
+        cards[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+    }
+}
+</script>
+{% endblock %}

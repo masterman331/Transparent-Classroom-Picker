@@ -1,0 +1,74 @@
+:root {
+    --primary: #2563eb; --primary-hover: #1d4ed8;
+    --bg: #f8fafc; --surface: #ffffff;
+    --text: #1e293b; --text-muted: #64748b;
+    --border: #e2e8f0; --success: #10b981; --error: #ef4444; --warn: #f59e0b;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg); color: var(--text);
+    margin: 0; padding: 40px 20px; line-height: 1.6;
+}
+.container {
+    max-width: 900px; margin: 0 auto; background: var(--surface);
+    border-radius: 12px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+}
+header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--border); padding-bottom: 20px; }
+h1 { color: var(--primary); margin: 0 0 10px 0; font-size: 2.2em; }
+nav a { color: var(--text-muted); text-decoration: none; margin: 0 15px; font-weight: 600; }
+nav a:hover { color: var(--primary); }
+input[type="text"], input[type="number"], input[type="password"], textarea, select {
+    width: 100%; padding: 12px; margin: 8px 0 20px 0;
+    border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 1em;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+label { font-weight: 600; color: var(--text); font-size: 0.95em; }
+.btn {
+    display: inline-block; background: var(--primary); color: #fff; border: none;
+    padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;
+    text-align: center; text-decoration: none; transition: 0.2s; width: 100%;
+}
+.btn:hover { background: var(--primary-hover); }
+.search-bar { margin-bottom: 20px; }
+.mode-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+.mode-card {
+    border: 1px solid var(--border); padding: 15px; border-radius: 8px;
+    text-decoration: none; color: var(--text); transition: 0.2s; background: var(--bg);
+}
+.mode-card:hover { border-color: var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); transform: translateY(-2px); }
+.mode-card strong { display: block; color: var(--primary); margin-bottom: 5px; }
+.info-box { background: #eff6ff; border-left: 4px solid var(--primary); padding: 15px; border-radius: 4px; margin-bottom: 25px; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: var(--bg); padding: 20px; border-radius: 8px; font-size: 0.9em;}
+.signature-box { margin-top: 30px; border: 2px dashed var(--border); padding: 20px; border-radius: 8px; text-align: center; }
+.result-block { margin-bottom: 20px; }
+.result-block h3 { border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.alert { padding: 15px; border-radius: 6px; margin-top: 20px; font-weight: bold; text-align: center; }
+.alert-success { background: #d1fae5; color: #065f46; border: 1px solid #34d399; }
+.alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+
+/* History Table */
+table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: #f1f5f9; font-weight: bold; }
+tr:hover { background: #f8fafc; }
+.badge { background: var(--primary); color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; }
+
+/* Forensic Audit Report UI */
+.audit-list { margin-top: 20px; list-style: none; padding: 0; }
+.audit-card {
+    background: #fff; border: 1px solid var(--border); border-left: 6px solid #ccc;
+    padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.audit-card.PASS { border-left-color: var(--success); }
+.audit-card.FAIL { border-left-color: var(--error); background: #fee2e2; }
+.audit-card.WARN { border-left-color: var(--warn); }
+
+.audit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.audit-title { font-weight: bold; color: var(--text); font-size: 1.1em; }
+.audit-status { font-size: 0.85em; font-weight: bold; padding: 2px 8px; border-radius: 12px; }
+.audit-status.PASS { background: #d1fae5; color: #065f46; }
+.audit-status.FAIL { background: #fecaca; color: #991b1b; }
+.audit-status.WARN { background: #fef3c7; color: #b45309; }
+.audit-desc { margin: 0; color: var(--text-muted); font-size: 0.95em; }
+.audit-math { margin-top: 10px; padding: 8px; background: #f1f5f9; border-radius: 4px; font-family: monospace; font-size: 0.85em; color: var(--primary); word-break: break-all;}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Forensic File Auditor</h2>
+
+<form action="/verify" method="POST" enctype="multipart/form-data" class="info-box">
+    <label>Upload JSON Audit File</label>
+    <input type="file" name="file" accept=".json" required>
+    <label>Teacher's Password (Optional - Used to verify signing authority)</label>
+    <input type="password" name="verify_pass" placeholder="Leave blank if just checking math integrity">
+    <button type="submit" class="btn">Run Cryptographic Forensic Scan</button>
+</form>
+
+{% if audit_trail %}
+    <div class="alert {% if is_valid %}alert-success{% else %}alert-error{% endif %}">{{ message }}</div>
+    
+    <ul class="audit-list">
+        {% for log in audit_trail %}
+        <li class="audit-card {{ log.status }}">
+            <div class="audit-header">
+                <span class="audit-title">Step {{ log.step }}: {{ log.title }}</span>
+                <span class="audit-status {{ log.status }}">{{ log.status }}</span>
+            </div>
+            <p class="audit-desc">{{ log.desc }}</p>
+            {% if log.math %}<div class="audit-math">🧮 {{ log.math }}</div>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

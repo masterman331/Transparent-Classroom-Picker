@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Classroom Verifiable Selection Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Transparent Classroom Picker</h1>
+            <nav><a href="/">📋 Select Mode</a> | <a href="/history">🗄️ History Dashboard</a> | <a href="/verify">🔍 Auditor Terminal</a></nav>
+        </header>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
