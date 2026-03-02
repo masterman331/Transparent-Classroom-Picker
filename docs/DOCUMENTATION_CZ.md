@@ -66,3 +66,6 @@ Pokud vygenerujete výsledek a později potřebujete přidat kontext (např. "Bo
 * Každý blok obsahuje `SHA-256` hash *předchozího* bloku.
 * To znamená, že staré poznámky nelze nikdy upravit nebo smazat, aniž by se rozbil celý řetězec.
 * K přidání poznámky je nutné heslo učitele (podpis), aby se soubor mohl znovu bezpečně zapečetit.
+
+> **Upozornění:**
+> Tento projekt byl vytvořen stylem „vibe codingu“, proto jej používejte s opatrností. – Masterman331
