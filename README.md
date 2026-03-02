@@ -44,3 +44,6 @@ Detailed cryptographic explanations and guides for every feature are available i
 
 ---
 *Created by [masterman331](https://github.com/masterman331) for the ultimate transparent classroom experience.*
+
+> **Disclaimer:**  
+> This project has been vibe-coded please use it cautiously. - Masterman331
