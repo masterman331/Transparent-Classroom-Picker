@@ -66,3 +66,6 @@ If you generate a result and later need to add context (e.g., "We had to skip Bo
 * Each block contains the `SHA-256` hash of the *previous* block.
 * This means historical notes can never be edited or deleted without destroying the chain. 
 * Appending a note requires the Teacher's Signature Password to re-seal the file.
+
+> **Disclaimer:**  
+> This project has been vibe-coded please use it cautiously. - Masterman331
